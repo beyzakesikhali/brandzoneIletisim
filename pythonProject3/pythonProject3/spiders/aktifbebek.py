@@ -31,6 +31,7 @@ class aktifBebek(scrapy.Spider) :
             items["image"]=image
             items["barcode"]=barcode
             items["url"]=productUrl
+            yield items
 
         if aktifBebek.pageNumber<3 :
             print("pageNumber:",aktifBebek.pageNumber)
