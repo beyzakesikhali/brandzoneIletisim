@@ -8,25 +8,29 @@ class aktifBebek(scrapy.Spider) :
     ]
 
     def parse(self, response):
-        items=PythonprojectItem()
-        products=response.xpath("//div[@class='products-item']").getall()
+        items=Pythonproject3Item()
+        productsList=response.xpath("//div[@class='products-list']")
+        productsItem=productsList.xpath("//div[@class='products-item']")
 
-        for product in products:
-            productName= response.xpath("//a[@class='name']/text()").get()
-            print("productName",productName)
-            brand=product.xpath("//a[@class='brand']/text()").get()
-            print("brand",brand)
-            barcode=product.xpath("p/text()").get()
-            print("barcode",barcode)
-            image=product.xpath("//img/@data-src").get()
-            print("image",image)
-            productUrl= response.xpath("//a[@class='name']/@href").get()
+        print("productItem: ", aktifBebek.pageNumber,"  ","len: ",len(productsItem),productsItem.extract())
+
+        for product in productsItem:
+            print("product beyza","page:", aktifBebek.pageNumber, product.extract())
+            productName= product.css('a[class*=name] ::text').get()
+            print("productName mehmet",productName)
+            brand=product.css('a[class*=brand] ::text').get()
+            print("brand me ",brand)
+            barcode=product.css("p::text").get()
+            print("barcode meh",barcode)
+            image=product.css('img::attr(data-src)').get()
+            print("image mehm",image)
+            productUrl= response.css("a[class*=name] ::attr(href)").get()
+
             items["name"]=productName
             items["brand"]=brand
             items["image"]=image
+            items["barcode"]=barcode
             items["url"]=productUrl
-            #print("ITEMS",items)
-        yield items
 
         if aktifBebek.pageNumber<3 :
             print("pageNumber:",aktifBebek.pageNumber)
@@ -34,10 +38,3 @@ class aktifBebek(scrapy.Spider) :
             next_page='https://www.aktifbebek.com/bebek-bakimi-ve-banyo?Kategori=13&sayfa='+str(aktifBebek.pageNumber)
             print("next_Page",next_page)
             yield response.follow(url=next_page, callback=self.parse)
-
-
-
-
-
-
-
